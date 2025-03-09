@@ -25,8 +25,8 @@ class CEMAgent:
     def __call__(self, obs):
         obs = preprocess_obs(obs)
         obs = torch.as_tensor(obs, device=self.device)
-        # 这里的 obs 的维度是 (width, height, channel)
-        obs = obs.permute(2, 0, 1).unsqueeze(0) # 将通道维度放到第2维，并增加batch维度 -> (batch, channel, width, height)
+        # 这里的 obs 的维度是 (height, width, channel)
+        obs = obs.permute(2, 0, 1).unsqueeze(0) # 将通道维度放到第2维，并增加batch维度 -> (batch, channel, height, width)
         
         with torch.no_grad(): # 不涉及模型训练
             embedded_obs = self.encoder(obs)
@@ -72,4 +72,4 @@ class CEMAgent:
         return action.cpu().numpy()
 
     def reset(self):
-        self.rnn_hidden = torch.zeros(1, self.rssm.rnn_hidden_dim, device=self.device)
+        self.rnn_hidden = torch.zeros(1, self.rssm.deterministic_dim, device=self.device)
