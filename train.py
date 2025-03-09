@@ -208,7 +208,7 @@ def main():
     # 保存模型参数，供测试和重建观测视频
     torch.save(encoder.state_dict(), os.path.join(log_dir, 'encoder.pth'))
     torch.save(Rssm.state_dict(), os.path.join(log_dir, 'rssm.pth'))
-    torch.save(obs_model.state_dict(), os.path.join(log_dir, 'obs_modal.pth'))
+    torch.save(obs_model.state_dict(), os.path.join(log_dir, 'obs_model.pth'))
     torch.save(reward_model.state_dict(), os.path.join(log_dir, 'reward_model.pth'))
     
 if __name__ == '__main__':
