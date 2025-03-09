@@ -45,9 +45,9 @@ def main():
                                train_args['rnn_hidden_dim']).to(device)
     
     # 加载模型参数
-    encoder.load_state_dict(torch.load(os.path.join(args.dir, 'encoder.pth'), map_location='cpu'))
-    rssm.load_state_dict(torch.load(os.path.join(args.dir, 'rssm.pth'), map_location='cpu'))
-    reward_model.load_state_dict(torch.load(os.path.join(args.dir, 'reward_model.pth'), map_location='cpu'))
+    encoder.load_state_dict(torch.load(os.path.join(args.dir, 'encoder.pth')))
+    rssm.load_state_dict(torch.load(os.path.join(args.dir, 'rssm.pth')))
+    reward_model.load_state_dict(torch.load(os.path.join(args.dir, 'reward_model.pth')))
     
     # CEM planner
     cem_agent = CEMAgent(encoder, rssm, reward_model,

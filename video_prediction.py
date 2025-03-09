@@ -52,7 +52,7 @@ def main():
         
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     encoder = Encoder().to(device)
-    rssm = RecurrentStateSpaceModel(args.state_dim, 
+    rssm = RecurrentStateSpaceModel(train_args['state_dim'], 
                                     env.action_space.shape[0],
                                     train_args['rnn_hidden_dim']).to(device)
     obs_model = ObservationModel(train_args['state_dim'],
@@ -80,11 +80,11 @@ def main():
     preprocessed_obs = torch.as_tensor(preprocessed_obs, device=device)
     preprocessed_obs = preprocessed_obs.transpose(1, 2).transpose(0, 1).unsqueeze(0)
     with torch.no_grad():
-        embedded_obs = encoder(preprocess_obs)
+        embedded_obs = encoder(preprocessed_obs)
         
     # 用 embedded_obs 根据后验分布计算 stochastic state
     deterministic_state = cem_agent.deterministic_state
-    stochastic_state = rssm.posterior(deterministic_state, embedded_obs)
+    stochastic_state = rssm.posterior(deterministic_state, embedded_obs).sample()
     frame = np.zeros((64, 64*2, 3))
     frames = []
     for _ in range(args.length):
