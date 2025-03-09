@@ -144,7 +144,6 @@ def main():
             reconstruct_observation = obs_model(flatten_stochastic_states, flatten_deterministic_states).view(args.chunk_length, args.batch_size, 3, 64, 64)
             predicted_reward = reward_model(flatten_stochastic_states, flatten_deterministic_states).view(args.chunk_length, args.batch_size, 1)
             mse_output = mse_loss(reconstruct_observation[1:], observations[1:], reduction='none')
-            print("mse_output shape:", mse_output.shape)
             obs_loss = 0.5 * mse_loss(reconstruct_observation[1:], observations[1:], reduction='none').mean([0, 1]).sum() # 按照 chunk 和 batch 两个维度求平均, 然后再将 3 个 channel 的所有像素的 mse loss 求和
             
             reward_loss = 0.5 * mse_loss(predicted_reward[1:], rewards[1:])
@@ -168,7 +167,7 @@ def main():
         
         # 收集经验
         start = time.time()
-        cem_agent = CEMAgent(Encoder, Rssm, reward_model, args.horizen, args.N_iterations, args.N_candidates, args.N_top_candidates)
+        cem_agent = CEMAgent(encoder, Rssm, reward_model, args.horizon, args.N_iterations, args.N_candidates, args.N_top_candidates)
         
         obs = env.reset()
         done = False
@@ -190,7 +189,7 @@ def main():
         # 每 10 个更新步长测试一次 without exploration noise
         if (episode + 1) % args.test_interval == 0:
             start = time.time()
-            cem_agent = CEMAgent(encoder, rssm, reward_model,
+            cem_agent = CEMAgent(encoder, Rssm, reward_model,
                                  args.horizon, args.N_iterations,
                                  args.N_candidates, args.N_top_candidates)
             obs = env.reset()

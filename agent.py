@@ -26,11 +26,11 @@ class CEMAgent:
         obs = preprocess_obs(obs)
         obs = torch.as_tensor(obs, device=self.device)
         # 这里的 obs 的维度是 (width, height, channel)
-        obs = obs.transpose(0, 1).transpose(1, 2).unsqueeze(0) # 增加一个 batch 的维度 -> (batch, channel, width, height)
+        obs = obs.permute(2, 0, 1).unsqueeze(0) # 将通道维度放到第2维，并增加batch维度 -> (batch, channel, width, height)
         
         with torch.no_grad(): # 不涉及模型训练
             embedded_obs = self.encoder(obs)
-            stochastic_state_posterior = self.rssm(self.deterministic_state, embedded_obs)
+            stochastic_state_posterior = self.rssm.posterior(self.deterministic_state, embedded_obs)
             
             # 初始化 action 的 distribution
             action_distribution = Normal(
@@ -44,12 +44,12 @@ class CEMAgent:
                 action_candidates = action_distribution.sample([self.N_candidates]).transpose(0, 1) # (horizon, N_candidate, 1)
                 
                 total_predicted_reward = torch.zeros(self.N_candidates, device=self.device)
-                stochastic_states = stochastic_state_posterior.sample([self.N_candidates]) # 去掉 batch_size 1
+                stochastic_states = stochastic_state_posterior.sample([self.N_candidates]).squeeze() # 去掉 batch_size 1
                 deterministic_states = self.deterministic_state.repeat([self.N_candidates, 1]) # 给每一个 candidate 创建初始 deterministic state
                 
                 # 计算 horizon 步的动作序列的 reward
                 for t in range(self.horizon):
-                    next_state_prior, deterministic_states = self.rssm(stochastic_states, action_candidates[t], deterministic_states)
+                    next_state_prior, deterministic_states = self.rssm.prior(stochastic_states, action_candidates[t], deterministic_states)
                     stochastic_states = next_state_prior.sample()
                     total_predicted_reward += self.reward_model(stochastic_states, deterministic_states).squeeze() # batch_size 为 1
                 
@@ -66,7 +66,10 @@ class CEMAgent:
         
         # 更新 deterministic state 用于下一步的 planning
         with torch.no_grad():
-            _, self.deterministic_state = self.rssm(stochastic_state_posterior.sample(),
-                                                action.unsqueeze[0],
-                                                self.deterministic_state)
+            _, self.deterministic_state = self.rssm.prior(stochastic_state_posterior.sample(),
+                                                action.unsqueeze(0),
+                                                self.deterministic_state,)
         return action.cpu().numpy()
+
+    def reset(self):
+        self.rnn_hidden = torch.zeros(1, self.rssm.rnn_hidden_dim, device=self.device)
