@@ -70,7 +70,9 @@ def main():
     
     # 创建 dm_control 环境并用 GymWrapper 修饰，其中包含了 RepeatStep
     env = suite.load(args.domain_name, args.task_name, task_kwargs={'random': args.seed})
-    env = pixels.Wrapper(env, render_kwargs={'height': 64, 'width': 64, 'camera_id': 0})
+    env = pixels.Wrapper(env, render_kwargs={'height': 64, 
+                                             'width': 64, 
+                                             'camera_id': 0})
     env = RepeatAction(GymWrapper(env), skip=args.action_repeat) # 默认为 4
     
     # 定义经验回放池
@@ -81,7 +83,9 @@ def main():
     # 定义模型和优化器
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     encoder = Encoder().to(device)
-    Rssm = RecurrentStateSpaceModel(args.state_dim, env.action_space.shape[0], args.rnn_hidden_dim).to(device)
+    Rssm = RecurrentStateSpaceModel(args.state_dim, 
+                                    env.action_space.shape[0], 
+                                    args.rnn_hidden_dim).to(device)
     obs_model = ObservationModel(args.state_dim, args.rnn_hidden_dim).to(device)
     reward_model = RewardModel(args.state_dim, args.rnn_hidden_dim).to(device)
     all_params = (list(encoder.parameters()) +
@@ -102,6 +106,28 @@ def main():
             
     # 剩余的 episodes，固定步长更新模型参数并根据 CEM 算法进行动作规划
     for episode in range(args.seed_episodes, args.all_episodes):
+        
+        # 收集经验
+        start = time.time()
+        cem_agent = CEMAgent(encoder, Rssm, reward_model, args.horizon, args.N_iterations, args.N_candidates, args.N_top_candidates)
+        
+        obs = env.reset()
+        done = False
+        total_reward = 0
+        while not done:
+            action = cem_agent(obs)
+            action += np.random.normal(0, np.sqrt(args.action_noise_var),
+                                       env.action_space.shape[0]) # 在动作中加入噪声
+            next_obs, reward, done, _ = env.step(action)
+            replay_buffer.add(obs, action, reward, done)
+            obs = next_obs
+            total_reward += reward
+
+        writer.add_scalar('total reward at train', total_reward, episode)
+        print('episode [%4d/%4d] is collected. Total reward is %f' %
+              (episode+1, args.all_episodes, total_reward))
+        print('elasped time for interaction: %.2fs' % (time.time() - start))    
+        
         # 更新模型
         start = time.time()
         for update_step in range(args.update_steps):
@@ -164,27 +190,6 @@ def main():
             writer.add_scalar('reward loss', reward_loss.item(), total_update_step)
         
         print('elapsed time for update: %.2fs' % (time.time() - start))
-        
-        # 收集经验
-        start = time.time()
-        cem_agent = CEMAgent(encoder, Rssm, reward_model, args.horizon, args.N_iterations, args.N_candidates, args.N_top_candidates)
-        
-        obs = env.reset()
-        done = False
-        total_reward = 0
-        while not done:
-            action = cem_agent(obs)
-            action += np.random.normal(0, np.sqrt(args.action_noise_var),
-                                       env.action_space.shape[0]) # 在动作中加入噪声
-            next_obs, reward, done, _ = env.step(action)
-            replay_buffer.add(obs, action, reward, done)
-            obs = next_obs
-            total_reward += reward
-
-        writer.add_scalar('total reward at train', total_reward, episode)
-        print('episode [%4d/%4d] is collected. Total reward is %f' %
-              (episode+1, args.all_episodes, total_reward))
-        print('elasped time for interaction: %.2fs' % (time.time() - start))    
         
         # 每 10 个更新步长测试一次 without exploration noise
         if (episode + 1) % args.test_interval == 0:

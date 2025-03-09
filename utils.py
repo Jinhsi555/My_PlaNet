@@ -41,14 +41,19 @@ class ReplayBuffer(object):
             while cross_border:
                 initial_index = np.random.randint(len(self) - chunk_length + 1) # 确保 initial_index 最大值开始的 chunk 不会超出 Replay_Buffer 的范围
                 final_index = initial_index + chunk_length - 1
-                cross_border = np.logical_and(initial_index <= episode_border, final_index > episode_border).any() # 对两个 condition 逻辑或，只要有任意一处为 True，则超出 episode 范围
+                cross_border = np.logical_and(initial_index <= episode_border, 
+                                              final_index > episode_border).any() # 对两个 condition 逻辑或，只要有任意一处为 True，则超出 episode 范围
             
             sampled_indexes += list(range(initial_index, final_index + 1))
             
-        sampled_observations = self.observations[sampled_indexes].reshape(batch_size, chunk_length, *self.observations.shape[1:])
-        sampled_actions = self.actions[sampled_indexes].reshape(batch_size, chunk_length, self.actions.shape[1])
-        sampled_rewards = self.rewards[sampled_indexes].reshape(batch_size, chunk_length, 1)
-        sampled_donns = self.dones[sampled_indexes].reshape(batch_size, chunk_length, 1)
+        sampled_observations = self.observations[sampled_indexes].reshape(
+            batch_size, chunk_length, *self.observations.shape[1:])
+        sampled_actions = self.actions[sampled_indexes].reshape(
+            batch_size, chunk_length, self.actions.shape[1])
+        sampled_rewards = self.rewards[sampled_indexes].reshape(
+            batch_size, chunk_length, 1)
+        sampled_donns = self.dones[sampled_indexes].reshape(
+            batch_size, chunk_length, 1)
         return sampled_observations, sampled_actions, sampled_rewards, sampled_donns
     
     def __len__(self):

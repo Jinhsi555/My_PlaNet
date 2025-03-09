@@ -9,12 +9,12 @@ class CEMAgent:
     使得分布中能获得较高累积奖励的动作序列的概率比较高。
     对 RSSM 模型使用 action 的决策
     """
-    def __init__(self, encoder, rssm, reward_model, horizen, N_iterations, N_candidates, N_top_candidates):
+    def __init__(self, encoder, rssm, reward_model, horizon, N_iterations, N_candidates, N_top_candidates):
         self.encoder = encoder
         self.rssm = rssm
         self.reward_model = reward_model
         
-        self.horizon = horizen
+        self.horizon = horizon
         self.N_iterations = N_iterations
         self.N_candidates = N_candidates
         self.N_top_candidates = N_top_candidates
@@ -26,7 +26,7 @@ class CEMAgent:
         obs = preprocess_obs(obs)
         obs = torch.as_tensor(obs, device=self.device)
         # 这里的 obs 的维度是 (height, width, channel)
-        obs = obs.permute(2, 0, 1).unsqueeze(0) # 将通道维度放到第2维，并增加batch维度 -> (batch, channel, height, width)
+        obs = obs.transpose(1, 2).transpose(0, 1).unsqueeze(0) # 将通道维度放到第2维，并增加batch维度 -> (batch, channel, height, width)
         
         with torch.no_grad(): # 不涉及模型训练
             embedded_obs = self.encoder(obs)
