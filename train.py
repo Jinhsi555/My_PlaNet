@@ -146,7 +146,7 @@ def main():
             mse_output = mse_loss(reconstruct_observation[1:], observations[1:], reduction='none')
             obs_loss = 0.5 * mse_loss(reconstruct_observation[1:], observations[1:], reduction='none').mean([0, 1]).sum() # 按照 chunk 和 batch 两个维度求平均, 然后再将 3 个 channel 的所有像素的 mse loss 求和
             
-            reward_loss = 0.5 * mse_loss(predicted_reward[1:], rewards[1:])
+            reward_loss = 0.5 * mse_loss(predicted_reward[1:], rewards[:-1])
             
             # 将所有的 Loss 求和, 更新模型参数
             loss = kl_loss + obs_loss + reward_loss
