@@ -84,8 +84,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     encoder = Encoder().to(device)
     Rssm = RecurrentStateSpaceModel(args.state_dim, 
-                                    env.action_space.shape[0], 
-                                    args.rnn_hidden_dim).to(device)
+                                    env.action_space.shape[0], args.rnn_hidden_dim).to(device)
     obs_model = ObservationModel(args.state_dim, args.rnn_hidden_dim).to(device)
     reward_model = RewardModel(args.state_dim, args.rnn_hidden_dim).to(device)
     all_params = (list(encoder.parameters()) +

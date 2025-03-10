@@ -1,0 +1,8 @@
+dm_control==1.0.13
+gym==0.26.2
+opencv-python==4.11.0.86
+matplotlib==3.5.3
+numpy==1.21.6
+tensorboard==2.11.2
+torch==1.13.1
+mujoco==2.3.7
