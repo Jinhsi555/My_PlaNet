@@ -16,31 +16,42 @@
 
 ## 模型功能
 
-- Encoder: 
-  
-  将观察到的图像编码到低维空间，降低计算复杂度
+<img src="./RSSM.png" alt="cheetah run" />
 
-- Recurent State Space Model
-  
-  **deterministic state model:**
-  
-  $$h_{t+1} = f(h_t, s_t, a_t)$$
+1. Encoder:
 
-  其中 $f(·)$ 是 `GRU` 网络
+   将观察到的图像编码到低维空间，降低计算复杂度
+2. Recurent State Space Model
+   - Prior
 
-  **Stochastic state model:** 
-  
-  $$s_{t+1}  \sim p(s_{t+1} | h_{t+1})$$
+      **deterministic state model:**
 
-  
+      $$
+      h_{t+1} = f(h_t, s_t, a_t)
+      $$
 
+      其中 $f(·)$ 是 `GRU` 网络
 
-- Observation Model
-  
-  $$p(o_t | h_t, s_t)$$
-- Reward Model
+      **Stochastic state model:**
 
-  $$p(r_t | h_t, s_t)$$
+      $$
+      s_{t+1}  \sim p(s_{t+1} | h_{t+1})
+      $$
+
+   - Posterior（需要先验计算出的 deterministic  state 来计算后验）
+
+      $$s_{t+1} \sim q(s_{t+1} | h_{t+1}, o_{t+1})$$
+
+3. Observation Model
+
+   $$
+   o_t \sim p(o_t | h_t, s_t)
+   $$
+4. Reward Model
+
+   $$
+   r_t \sim p(r_t | h_t, s_t)
+   $$
 
 ---
 
@@ -133,6 +144,7 @@ tensorboard --logdir=log --port=6006
 <img src="./reacher easy.gif" alt="reacher easy"/>
 
 由于设备算力和时间有限，这里展示的效果是只进行了 600 次训练的结果
+
 ## 证明
 
 **ELBO 证据下界的两种推导：**
@@ -140,7 +152,6 @@ tensorboard --logdir=log --port=6006
 先从 VAE 的原理入手：
 
 <img src="ELBO1.png" alt="ELBO"/>
-
 
 再推广到论文中的 Training Objective（这里只给出了第一种，第二种读者可以参考 VAE 的第二种方法自行推导）：
 
