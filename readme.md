@@ -28,7 +28,7 @@
      **deterministic state model:**
 
      $$
-     _{t+1} = f(h_t, s_t, a_t)
+     h_{t+1} = f(h_t, s_t, a_t)
      $$
 
      其中 $f(·)$ 是 `GRU` 网络
@@ -36,12 +36,12 @@
      **Stochastic state model:**
 
      $$
-     _{t+1}  \sim p(s_{t+1} | h_{t+1})
+     s_{t+1}  \sim p(s_{t+1} | h_{t+1})
      $$
    - Posterior（需要先验计算出的 deterministic  state 来计算后验）
 
      $$
-     _{t+1} \sim q(s_{t+1} | h_{t+1}, o_{t+1})
+     s_{t+1} \sim q(s_{t+1} | h_{t+1}, o_{t+1})
      $$
 3. Observation Model
 
