@@ -14,7 +14,7 @@
 
 ---
 
-## 模型功能
+## 模型架构
 
 <img src="./RSSM.png" alt="cheetah run" />
 
@@ -22,28 +22,37 @@
 
    将观察到的图像编码到低维空间，降低计算复杂度
 2. Recurent State Space Model
+
    - Prior
 
-      **deterministic state model:**
+     **deterministic state model:**
 
-      $$h_{t+1} = f(h_t, s_t, a_t)$$
+     $$
+     _{t+1} = f(h_t, s_t, a_t)
+     $$
 
-      其中 $f(·)$ 是 `GRU` 网络
+     其中 $f(·)$ 是 `GRU` 网络
 
-      **Stochastic state model:**
+     **Stochastic state model:**
 
-      $$s_{t+1}  \sim p(s_{t+1} | h_{t+1})$$
-
+     $$
+     _{t+1}  \sim p(s_{t+1} | h_{t+1})
+     $$
    - Posterior（需要先验计算出的 deterministic  state 来计算后验）
 
-      $$s_{t+1} \sim q(s_{t+1} | h_{t+1}, o_{t+1})$$
-
+     $$
+     _{t+1} \sim q(s_{t+1} | h_{t+1}, o_{t+1})
+     $$
 3. Observation Model
 
-   $$o_t \sim p(o_t | h_t, s_t)$$
+   $$
+   o_t \sim p(o_t | h_t, s_t)
+   $$
 4. Reward Model
 
-   $$r_t \sim p(r_t | h_t, s_t)$$
+   $$
+   r_t \sim p(r_t | h_t, s_t)
+   $$
 
 ---
 
@@ -129,11 +138,11 @@ tensorboard --logdir=log --port=6006
 
 ### cheetah run
 
-<img src="./cheetah run.gif" alt="cheetah run" />
+`<img src="./cheetah run.gif" alt="cheetah run" />`
 
 ### Reacher Easy
 
-<img src="./reacher easy.gif" alt="reacher easy"/>
+`<img src="./reacher easy.gif" alt="reacher easy"/>`
 
 由于设备算力和时间有限，这里展示的效果是只进行了 600 次训练的结果
 
