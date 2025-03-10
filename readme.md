@@ -26,17 +26,13 @@
 
       **deterministic state model:**
 
-      $$
-      h_{t+1} = f(h_t, s_t, a_t)
-      $$
+      $$h_{t+1} = f(h_t, s_t, a_t)$$
 
       其中 $f(·)$ 是 `GRU` 网络
 
       **Stochastic state model:**
 
-      $$
-      s_{t+1}  \sim p(s_{t+1} | h_{t+1})
-      $$
+      $$s_{t+1}  \sim p(s_{t+1} | h_{t+1})$$
 
    - Posterior（需要先验计算出的 deterministic  state 来计算后验）
 
@@ -44,14 +40,10 @@
 
 3. Observation Model
 
-   $$
-   o_t \sim p(o_t | h_t, s_t)
-   $$
+   $$o_t \sim p(o_t | h_t, s_t)$$
 4. Reward Model
 
-   $$
-   r_t \sim p(r_t | h_t, s_t)
-   $$
+   $$r_t \sim p(r_t | h_t, s_t)$$
 
 ---
 
