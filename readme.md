@@ -128,11 +128,11 @@ tensorboard --logdir=log --port=6006
 
 ### cheetah run
 
-`<img src="./cheetah run.gif" alt="cheetah run" />`
+<img src="./cheetah run.gif" alt="cheetah run" />
 
 ### Reacher Easy
 
-`<img src="./reacher easy.gif" alt="reacher easy"/>`
+<img src="./reacher easy.gif" alt="reacher easy"/>
 
 由于设备算力和时间有限，这里展示的效果是只进行了 600 次训练的结果
 
