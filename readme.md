@@ -232,7 +232,7 @@ $$
 	\left [
 		\text{KL} \left [ q(s_t | o_{\leq t}, a_{\textless t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right ]
 	\right ]
-\right ) \\
+\right )
 &&\blacksquare
 \end{aligned}
 ```
