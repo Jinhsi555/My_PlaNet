@@ -216,7 +216,7 @@ $$
 \left (
 	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
 	- \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1}) 
-		\left ( \int q(s_t | o \leq t, a \textless t) \log \frac {q(s_t | o_{\leq t}, a_{\textless t})}{p(s_t | s_{t-1}, a_{t-1})}ds \right ) ds_{t-1}
+		\left ( \int q(s_t | o \leq t, a \textless t) \log \frac {q(s_t | o_{\leq t}, a_{\textless t})}{p(s_t | s_{t-1}, a_{t-1})}ds_t \right ) ds_{t-1}
 \right ) \\
 &= \sum _{t=1} ^T
 \left (
