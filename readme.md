@@ -149,6 +149,84 @@ tensorboard --logdir=log --port=6006
 <img src="ELBO2.png" alt="ELBO"/>
 <img src="ELBO_proof.png" alt="ELBO"/>
 
+定义序列的条件概率如下：
+$$\begin{aligned}
+p(o_{1:T}, s_{1:T} | a_{1:T}) &= \prod_{t=1}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t)\\
+q(s_{1:T} | o_{1:T}, a_{1:T}) &= \prod_{t=1}^T q(s_t | o_{\leq t}, a_{<t})
+\end{aligned}$$
+
+于是可以得到观测序列的条件对数似然：
+$$
+\begin{aligned}
+\log p(o_{1:T} | a_{1:T}) &= \log \int p(s_{1:T}, o_{1:T} | a_{1:T}) \, ds_{1:T} \\
+&= \log \int \prod_{t=1}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t) ds_{1:T} \\
+&= \log \int \prod_{t=2}^T p(s_t | s_{t-1}, a_{t-1})\int p(s_1 | s_{0}, a_{0}) p(o_1 | s_1) ds_1 ds_{2:T} \\
+&= \log \int \prod_{t=2}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t) \mathbb E_{s_1 \sim p(s_1 | a_0)} \left [ p(o_1 | s_1) \right ] ds_{2:T} \\
+&\cdots \\
+&\triangleq \log \int \mathbb E_{p(s_{1:T} | a_{1:T})} \left [ \prod_{t=1}^T p(o_t | s_t)\right ]
+\end{aligned}
+$$
+然后利用**重要性权重**将真实的后验分布 $p(s_{1:T} | a_{1:T})$ 转化为**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$：
+$$
+\begin{aligned}
+\log p(o_{1:T} | a_{1:T}) &= \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}
+\left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t) \right ] \\
+\end{aligned}
+$$
+根据 Jensen 不等式，若 $\phi$ 是任一凸函数，则
+$$
+\varphi(\mathbb E[X]) \leq \mathbb E[\varphi(X)]
+$$
+由于 $\log(\cdot)$ 是凹函数，则
+$$
+\log(\mathbb E[X]) \ge \mathbb E[\log(X)]
+$$
+
+$$
+\begin{aligned}
+\log p(o_{1:T} | a_{1:T}) &= \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}
+\left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t) \right ] \\
+&\ge \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [ \log \prod _{t=1} ^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t)  \right ] \\
+&= \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [  \sum_{t=1}^T \log p(o_t | s_t) - \sum _{t=1}^T \log \frac{q(s_t | o_{\leq t}, s_{<t}))}{p(s_t |  s_{t-1}, a_t)} \right ]\\
+&= \sum _{t=1} ^T 
+\left (
+	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
+	+ \mathbb E_{q(s_{t-1:t} | o_{\leq t},a_{<t})} \left [ \log p(s_t | s_{t-1}, a_{t-1}) \right ]
+	- \mathbb E_{q(s_t | o_t,a_t)} \left [ \log q(s_t | o_{\leq t}, a_{<t}) \right ] 
+\right ) \\
+&= \sum _{t=1} ^T
+\left (
+	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
+	+ \int q(s_{t-1} | o_{\leq t-1},a_{<t-1})
+	\left ( \int q(s_{t} | o_{\leq t},a_{<t}) \log p(s_t | s_{t-1}, a_{t-1}) ds_t \right )
+	ds_{t-1}
+	-\int q(s_t | o_t,a_t) \log q(s_t | o_{\leq t}, a_{<t}) ds
+\right ) \\
+&= \sum _{t=1} ^T
+\left (
+	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
+	- \int q(s_{t-1} | o_{\leq t-1},a_{<t-1}) 
+		\left ( \int q(s_t | o_t,a_t) \log \frac {q(s_t | o_{\leq t}, a_{<t})}{p(s_t | s_{t-1}, a_{t-1})}ds \right ) ds_{t-1}
+\right ) \\
+&= \sum _{t=1} ^T
+\left (
+	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
+	- \int q(s_{t-1} | o_{\leq t-1},a_{<t-1}) 
+		\text{KL} \left ( q(s_t | o_{\leq t}, a_{<t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right )
+		ds_{t-1}
+\right ) \\
+&= \sum _{t=1} ^T
+\left (
+	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
+	- \mathbb E_{q(s_{t-1} | o_{\leq t-1},a_{<t-1})}
+	\left [
+		\text{KL} \left [ q(s_t | o_{\leq t}, a_{<t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right ]
+	\right ]
+\right ) 
+&&\blacksquare
+\end{aligned}
+$$
+
 ## Reference
 
 - [Learning Latent Dynamics for Planning from Pixels](https://arxiv.org/abs/1811.04551)
