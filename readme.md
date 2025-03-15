@@ -160,42 +160,32 @@ $$
 
 于是可以得到观测序列的条件对数似然：
 
-$$
-\begin{aligned}
+$$ \begin{aligned}
 \log p(o_{1:T} | a_{1:T}) &= \log \int p(s_{1:T}, o_{1:T} | a_{1:T}) \, ds_{1:T} \\
 &= \log \int \prod_{t=1}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t) ds_{1:T} \\
 &= \log \int \prod_{t=2}^T p(s_t | s_{t-1}, a_{t-1})\int p(s_1 | s_{0}, a_{0}) p(o_1 | s_1) ds_1 ds_{2:T} \\
 &= \log \int \prod_{t=2}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t) \mathbb E_{s_1 \sim p(s_1 | a_0)} \left [ p(o_1 | s_1) \right ] ds_{2:T} \\
 &\cdots \\
 &\triangleq \log \int \mathbb E_{p(s_{1:T} | a_{1:T})} \left [ \prod_{t=1}^T p(o_t | s_t)\right ]
-\end{aligned}
-$$
+\end{aligned} $$
 
 然后利用**重要性权重**将真实的后验分布 $p(s_{1:T} | a_{1:T})$ 转化为**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$： 
 
-$$
-\begin{aligned}
+$$ \begin{aligned}
 \log p(o_{1:T} | a_{1:T}) &= \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}
 \left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t) \right ] \\
-\end{aligned}
-$$
+\end{aligned} $$
 
 
 根据 Jensen 不等式，若 $\phi$ 是任一凸函数，则
 
-$$
-\varphi(\mathbb E[X]) \leq \mathbb E[\varphi(X)]
-$$
+$$ \varphi(\mathbb E[X]) \leq \mathbb E[\varphi(X)] $$
 
 由于 $\log(\cdot)$ 是凹函数，则
 
-$$
-\log(\mathbb E[X]) \ge \mathbb E[\log(X)]
-$$
+$$ \log(\mathbb E[X]) \ge \mathbb E[\log(X)] $$
 
-$$
-
-\begin{aligned}
+$$ \begin{aligned}
 \log p(o_{1:T} | a_{1:T}) &= \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}
 \left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t) \right ] \\
 &\ge \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [ \log \prod _{t=1} ^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t)  \right ] \\
@@ -236,9 +226,7 @@ $$
 	\right ]
 \right ) 
 &&\blacksquare
-\end{aligned}
-
-$$
+\end{aligned} $$
 
 ## Reference
 
