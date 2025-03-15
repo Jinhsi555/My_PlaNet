@@ -149,7 +149,7 @@ tensorboard --logdir=log --port=6006
 <img src="ELBO2.png" alt="ELBO"/>
 <img src="ELBO_proof.png" alt="ELBO"/>
 
-定义序列的条件概率如下：
+定义序列的条件概率如下： 
 
 $$
 \begin{aligned}
@@ -171,7 +171,7 @@ $$
 \end{aligned}
 $$
 
-然后利用**重要性权重**将真实的后验分布 $p(s_{1:T} | a_{1:T})$ 转化为**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$：
+然后利用**重要性权重**将真实的后验分布 $p(s_{1:T} | a_{1:T})$ 转化为**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$： 
 
 $$
 \begin{aligned}
@@ -192,8 +192,8 @@ $$
 \log(\mathbb E[X]) \ge \mathbb E[\log(X)]
 $$
 
-
 $$
+
 \begin{aligned}
 \log p(o_{1:T} | a_{1:T}) &= \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}
 \left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t) \right ] \\
@@ -236,6 +236,7 @@ $$
 \right ) 
 &&\blacksquare
 \end{aligned}
+
 $$
 
 ## Reference
