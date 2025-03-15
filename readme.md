@@ -147,6 +147,7 @@ tensorboard --logdir=log --port=6006
 再推广到论文中的 Training Objective（这里只给出了第一种，第二种读者可以参考 VAE 的第二种方法自行推导）：
 
 <img src="ELBO2.png" alt="ELBO"/>
+<img src="ELBO_proof.png" alt="ELBO"/>
 
 ## Reference
 
