@@ -16,7 +16,7 @@
 
 ## 模型架构
 
-<img src="./RSSM.png" alt="cheetah run" />
+\textless img src="./RSSM.png" alt="cheetah run" />
 
 1. Encoder:
 
@@ -128,11 +128,11 @@ tensorboard --logdir=log --port=6006
 
 ### cheetah run
 
-<img src="./cheetah run.gif" alt="cheetah run" />
+\textless img src="./cheetah run.gif" alt="cheetah run" />
 
 ### Reacher Easy
 
-<img src="./reacher easy.gif" alt="reacher easy"/>
+\textless img src="./reacher easy.gif" alt="reacher easy"/>
 
 由于设备算力和时间有限，这里展示的效果是只进行了 600 次训练的结果
 
@@ -142,12 +142,12 @@ tensorboard --logdir=log --port=6006
 
 先从 VAE 的原理入手：
 
-<img src="ELBO1.png" alt="ELBO"/>
+\textless img src="ELBO1.png" alt="ELBO"/>
 
 再推广到论文中的 Training Objective（这里只给出了第一种，第二种读者可以参考 VAE 的第二种方法自行推导）：
 
-<img src="ELBO2.png" alt="ELBO"/>
-<img src="ELBO_proof.png" alt="ELBO"/>
+\textless img src="ELBO2.png" alt="ELBO"/>
+\textless img src="ELBO_proof.png" alt="ELBO"/>
 
 
 定义序列的条件概率如下：
@@ -155,7 +155,7 @@ tensorboard --logdir=log --port=6006
 $$
 \begin{aligned}
 p(o_{1:T}, s_{1:T} | a_{1:T}) &= \prod_{t=1}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t)\\
-q(s_{1:T} | o_{1:T}, a_{1:T}) &= \prod_{t=1}^T q(s_t | o_{\leq t}, a_{<t}) \\
+q(s_{1:T} | o_{1:T}, a_{1:T}) &= \prod_{t=1}^T q(s_t | o_{\leq t}, a_{\textless t}) \\
 \end{aligned}
 $$
 
@@ -175,7 +175,7 @@ $$
 然后利用**重要性权重**将真实的后验分布 $p(s_{1:T} | a_{1:T})$ 转化为**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$：
 
 $$
-\log p(o_{1:T} | a_{1:T}) = \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}} \left[ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t) \right]
+\log p(o_{1:T} | a_{1:T}) = \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}} \left[ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{\textless t})} \cdot p(o_t | s_t) \right]
 $$
 
 根据 Jensen 不等式，若 $\phi$ 是任一凸函数，则
@@ -194,42 +194,42 @@ $$
 $$
 \begin{aligned}
 \log p(o_{1:T} | a_{1:T}) &= \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}
-\left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t) \right ] \\
-&\ge \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [ \log \prod _{t=1} ^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{<t})} \cdot p(o_t | s_t)  \right ] \\
-&= \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [  \sum_{t=1}^T \log p(o_t | s_t) - \sum _{t=1}^T \log \frac{q(s_t | o_{\leq t}, s_{<t}))}{p(s_t |  s_{t-1}, a_t)} \right ]\\
+\left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{\textless t})} \cdot p(o_t | s_t) \right ] \\
+&\ge \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [ \log \prod _{t=1} ^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{\textless t})} \cdot p(o_t | s_t)  \right ] \\
+&= \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [  \sum_{t=1}^T \log p(o_t | s_t) - \sum _{t=1}^T \log \frac{q(s_t | o_{\leq t}, s_{\textless t}))}{p(s_t |  s_{t-1}, a_t)} \right ]\\
 &= \sum _{t=1} ^T 
 \left (
 	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
-	+ \mathbb E_{q(s_{t-1:t} | o_{\leq t},a_{<t})} \left [ \log p(s_t | s_{t-1}, a_{t-1}) \right ]
-	- \mathbb E_{q(s_t | o_t,a_t)} \left [ \log q(s_t | o_{\leq t}, a_{<t}) \right ] 
+	+ \mathbb E_{q(s_{t-1:t} | o_{\leq t},a_{\textless t})} \left [ \log p(s_t | s_{t-1}, a_{t-1}) \right ]
+	- \mathbb E_{q(s_t | o_t,a_t)} \left [ \log q(s_t | o_{\leq t}, a_{\textless t}) \right ] 
 \right ) \\
 &= \sum _{t=1} ^T
 \left (
 	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
-	+ \int q(s_{t-1} | o_{\leq t-1},a_{<t-1})
-	\left ( \int q(s_{t} | o_{\leq t},a_{<t}) \log p(s_t | s_{t-1}, a_{t-1}) ds_t \right )
+	+ \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1})
+	\left ( \int q(s_{t} | o_{\leq t},a_{\textless t}) \log p(s_t | s_{t-1}, a_{t-1}) ds_t \right )
 	ds_{t-1}
-	-\int q(s_t | o_t,a_t) \log q(s_t | o_{\leq t}, a_{<t}) ds
+	-\int q(s_t | o_t,a_t) \log q(s_t | o_{\leq t}, a_{\textless t}) ds
 \right ) \\
 &= \sum _{t=1} ^T
 \left (
 	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
-	- \int q(s_{t-1} | o_{\leq t-1},a_{<t-1}) 
-		\left ( \int q(s_t | o_t,a_t) \log \frac {q(s_t | o_{\leq t}, a_{<t})}{p(s_t | s_{t-1}, a_{t-1})}ds \right ) ds_{t-1}
+	- \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1}) 
+		\left ( \int q(s_t | o_t,a_t) \log \frac {q(s_t | o_{\leq t}, a_{\textless t})}{p(s_t | s_{t-1}, a_{t-1})}ds \right ) ds_{t-1}
 \right ) \\
 &= \sum _{t=1} ^T
 \left (
 	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
-	- \int q(s_{t-1} | o_{\leq t-1},a_{<t-1}) 
-		\text{KL} \left ( q(s_t | o_{\leq t}, a_{<t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right )
+	- \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1}) 
+		\text{KL} \left ( q(s_t | o_{\leq t}, a_{\textless t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right )
 		ds_{t-1}
 \right ) \\
 &= \sum _{t=1} ^T
 \left (
 	\mathbb E_{q(s_t | o_t,a_t)} \left [ \log p(o_t | s_t) \right ] 
-	- \mathbb E_{q(s_{t-1} | o_{\leq t-1},a_{<t-1})}
+	- \mathbb E_{q(s_{t-1} | o_{\leq t-1},a_{\textless t-1})}
 	\left [
-		\text{KL} \left [ q(s_t | o_{\leq t}, a_{<t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right ]
+		\text{KL} \left [ q(s_t | o_{\leq t}, a_{\textless t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right ]
 	\right ]
 \right ) 
 &&\blacksquare
