@@ -149,6 +149,7 @@ tensorboard --logdir=log --port=6006
 <img src="ELBO2.png" alt="ELBO"/>
 <img src="ELBO_proof.png" alt="ELBO"/>
 
+
 定义序列的条件概率如下：
 
 $$
