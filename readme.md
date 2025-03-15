@@ -172,7 +172,7 @@ $$
 \end{aligned}
 $$
 
-然后利用**重要性权重**将真实的后验分布 $p(s_{1:T} | a_{1:T})$ 转化为**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$：
+然后利用**重要性权重**引入**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$：
 
 $$
 \log p \left( o_{1:T} | a_{1:T} \right) = \log \mathbb E_{q\left( s_{1:T} | o_{1:T},a_{1:T}\right)} \left[ \prod_{t=1}^T \frac {p\left( s_t | s_{t-1}, a_t \right) }{q(s_t | o_{\leq t}, s_{\textless t})} \cdot p\left( o_t | s_t\right) \right]
@@ -205,11 +205,13 @@ $$
 	- \mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log q(s_t | o_{\leq t}, a_{\textless t}) \right ] 
 \right ) \\
 &= \sum _{t=1} ^T
+\left(
 	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
 	+ \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1})
 	\left( \int q(s_{t} | o_{\leq t},a_{\textless t}) \log p(s_t | s_{t-1}, a_{t-1}) ds_t \right)
 	ds_{t-1}
-	-\int q(s_t | o \leq t, a \textless t) \log q(s_t | o_{\leq t}, a_{\textless t}) ds_t \\
+	-\int q(s_t | o \leq t, a \textless t) \log q(s_t | o_{\leq t}, a_{\textless t}) ds_t 
+\right) \\
 &= \sum _{t=1} ^T
 \left (
 	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
