@@ -200,39 +200,37 @@ $$
 &= \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})} \left [  \sum_{t=1}^T \log p(o_t | s_t) - \sum _{t=1}^T \log \frac{q(s_t | o_{\leq t}, s_{\textless t}))}{p(s_t |  s_{t-1}, a_t)} \right ]\\
 &= \sum _{t=1} ^T 
 \left (
-	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
+	\mathbb E_{q(s_t | o_{\leq t}, a_{ \textless t})} \left [ \log p(o_t | s_t) \right ] 
 	+ \mathbb E_{q(s_{t-1:t} | o_{\leq t},a_{\textless t})} \left [ \log p(s_t | s_{t-1}, a_{t-1}) \right ]
-	- \mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log q(s_t | o_{\leq t}, a_{\textless t}) \right ] 
+	- \mathbb E_{q(s_t | o_{\leq t}, a_{ \textless t})} \left [ \log q(s_t | o_{\leq t}, a_{\textless t}) \right ] 
 \right ) \\
 &= \sum _{t=1} ^T
-\left(
-	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
+	\mathbb E_{q(s_t | o_{\leq t}, a_{ \textless t})} \left [ \log p(o_t | s_t) \right ] 
 	+ \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1})
 	\left( \int q(s_{t} | o_{\leq t},a_{\textless t}) \log p(s_t | s_{t-1}, a_{t-1}) ds_t \right)
 	ds_{t-1}
-	-\int q(s_t | o \leq t, a \textless t) \log q(s_t | o_{\leq t}, a_{\textless t}) ds_t 
-\right) \\
+	-\int q(s_t | o_{\leq t}, a_{ \textless t}) \log q(s_t | o_{\leq t}, a_{\textless t}) ds_t \\
 &= \sum _{t=1} ^T
 \left (
-	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
+	\mathbb E_{q(s_t | o_{\leq t}, a_{ \textless t})} \left [ \log p(o_t | s_t) \right ] 
 	- \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1}) 
-		\left ( \int q(s_t | o \leq t, a \textless t) \log \frac {q(s_t | o_{\leq t}, a_{\textless t})}{p(s_t | s_{t-1}, a_{t-1})}ds_t \right ) ds_{t-1}
+		\left ( \int q(s_t | o_{\leq t}, a_{ \textless t}) \log \frac {q(s_t | o_{\leq t}, a_{\textless t})}{p(s_t | s_{t-1}, a_{t-1})}ds_t \right ) ds_{t-1}
 \right ) \\
 &= \sum _{t=1} ^T
 \left (
-	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
+	\mathbb E_{q(s_t | o_{\leq t}, a_{ \textless t})} \left [ \log p(o_t | s_t) \right ] 
 	- \int q(s_{t-1} | o_{\leq t-1},a_{\textless t-1}) 
 		\text{KL} \left ( q(s_t | o_{\leq t}, a_{\textless t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right )
 		ds_{t-1}
 \right ) \\
 &= \sum _{t=1} ^T
 \left (
-	\mathbb E_{q(s_t | o \leq t, a \textless t)} \left [ \log p(o_t | s_t) \right ] 
+	\mathbb E_{q(s_t | o_{\leq t}, a_{ \textless t})} \left [ \log p(o_t | s_t) \right ] 
 	- \mathbb E_{q(s_{t-1} | o_{\leq t-1},a_{\textless t-1})}
 	\left [
 		\text{KL} \left [ q(s_t | o_{\leq t}, a_{\textless t}) \parallel p(s_t | s_{t-1}, a_{t-1}) \right ]
 	\right ]
-\right )
+\right ) \\
 &&\blacksquare
 \end{aligned}
 ```
