@@ -128,11 +128,11 @@ tensorboard --logdir=log --port=6006
 
 ### cheetah run
 
-\textless img src="./cheetah run.gif" alt="cheetah run" />
+<img src="./cheetah run.gif" alt="cheetah run" />
 
 ### Reacher Easy
 
-\textless img src="./reacher easy.gif" alt="reacher easy"/>
+<img src="./reacher easy.gif" alt="reacher easy"/>
 
 由于设备算力和时间有限，这里展示的效果是只进行了 600 次训练的结果
 
@@ -142,12 +142,12 @@ tensorboard --logdir=log --port=6006
 
 先从 VAE 的原理入手：
 
-\textless img src="ELBO1.png" alt="ELBO"/>
+<img src="ELBO1.png" alt="ELBO"/>
 
 再推广到论文中的 Training Objective（这里只给出了第一种，第二种读者可以参考 VAE 的第二种方法自行推导）：
 
-\textless img src="ELBO2.png" alt="ELBO"/>
-\textless img src="ELBO_proof.png" alt="ELBO"/>
+<img src="ELBO2.png" alt="ELBO"/>
+<img src="ELBO_proof.png" alt="ELBO"/>
 
 
 定义序列的条件概率如下：
@@ -175,7 +175,7 @@ $$
 然后利用**重要性权重**将真实的后验分布 $p(s_{1:T} | a_{1:T})$ 转化为**变分分布** $q(s_{1:T} | o_{{1:T}}, a_{1:T})$：
 
 $$
-\log p(o_{1:T} | a_{1:T}) = \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}} \left[ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{\textless t})} \cdot p(o_t | s_t) \right]
+\log p \left( o_{1:T} | a_{1:T} \right) = \log \mathbb E_{q\left( s_{1:T} | o_{1:T},a_{1:T}\right)} \left[ \prod_{t=1}^T \frac {p\left( s_t | s_{t-1}, a_t \right) }{q(s_t | o_{\leq t}, s_{\textless t})} \cdot p\left( o_t | s_t\right) \right]
 $$
 
 根据 Jensen 不等式，若 $\phi$ 是任一凸函数，则
@@ -190,8 +190,9 @@ $$
 \log(\mathbb E[X]) \ge \mathbb E[\log(X)]
 $$
 
+可推出 ELBO
 
-$$
+```math
 \begin{aligned}
 \log p(o_{1:T} | a_{1:T}) &= \log \mathbb E_{q(s_{1:T} | o_{1:T},a_{1:T})}
 \left [ \prod_{t=1}^T \frac {p(s_t | s_{t-1}, a_t) }{q(s_t | o_{\leq t}, s_{\textless t})} \cdot p(o_t | s_t) \right ] \\
@@ -234,7 +235,8 @@ $$
 \right ) 
 &&\blacksquare
 \end{aligned}
-$$
+```
+
 
 ## Reference
 
