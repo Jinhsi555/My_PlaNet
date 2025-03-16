@@ -165,7 +165,7 @@ $$
 \begin{aligned}
 \log p(o_{1:T} | a_{1:T}) &= \log \int p(s_{1:T}, o_{1:T} | a_{1:T}) \, ds_{1:T} \\
 &= \log \int \prod_{t=1}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t) ds_{1:T} \\
-&= \log \int \prod_{t=2}^T p(s_t | s_{t-1}, a_{t-1})\int p(s_1 | s_{0}, a_{0}) p(o_1 | s_1) ds_1 ds_{2:T} \\
+&= \log \int \prod_{t=2}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t) \left( \int p(s_1 | s_{0}, a_{0}) p(o_1 | s_1) ds_1 \right) ds_{2:T} \\
 &= \log \int \prod_{t=2}^T p(s_t | s_{t-1}, a_{t-1}) p(o_t | s_t) \mathbb E_{s_1 \sim p(s_1 | a_0)} \left[ p(o_1 | s_1) \right ] ds_{2:T} \\
 &\cdots \\
 &\triangleq \log \mathbb E_{p(s_{1:T} | a_{1:T})} \left[ \prod_{t=1}^T p(o_t | s_t) \right]
