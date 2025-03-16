@@ -142,7 +142,7 @@ tensorboard --logdir=log --port=6006
 
 先从 VAE 的原理入手：
 
-<img src="ELBO1.png" alt="ELBO"/>
+<img src="ELBO1.jpg" alt="ELBO"/>
 
 再推广到论文中的 Training Objective（这里只给出了第一种，第二种读者可以参考 VAE 的第二种方法自行推导）：
 
